@@ -17,7 +17,21 @@ body{margin:0;min-height:100vh;padding:28px 18px 20px;display:flex;flex-directio
 .msg{margin:14px 0 0;padding:14px;border-radius:12px;background:rgba(255,230,0,.08);border:1px solid rgba(255,230,0,.45);color:#ffe600;font-size:14px;line-height:1.5}
 .footer{margin-top:22px;font-size:12px;color:#7f93c4;text-align:center;letter-spacing:.3px}
 `;
-
+.card{position:relative;overflow:hidden;animation:rise .9s ease-out both}
+@keyframes rise{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+.card::before{content:"";position:absolute;inset:0;border-radius:22px;padding:1px;background:linear-gradient(120deg,transparent 30%,rgba(255,230,0,.85) 50%,transparent 70%);background-size:250% 100%;animation:borderSweep 4s linear infinite;-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none}
+@keyframes borderSweep{0%{background-position:150% 0}100%{background-position:-150% 0}}
+.star-on{color:#ffe600;text-shadow:0 0 14px rgba(255,230,0,.6);animation:starPulse 2.4s ease-in-out infinite;display:inline-block}
+.star-off{color:#fff;animation:starBlink 1.6s steps(2,start) infinite;display:inline-block}
+.star-off:nth-child(4){animation-delay:.4s}
+@keyframes starPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+@keyframes starBlink{0%,100%{color:#fff;opacity:1}50%{color:#ffe600;opacity:.4}}
+.btn{position:relative;overflow:hidden}
+.btn::after{content:"";position:absolute;top:0;left:-75%;width:50%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.45),transparent);transform:skewX(-20deg);animation:shine 3.5s ease-in-out infinite;pointer-events:none}
+@keyframes shine{0%{left:-75%}60%,100%{left:125%}}
+.shop{color:transparent;background:linear-gradient(90deg,#ffffff 0%,#ffe600 40%,#ffffff 60%);background-size:200% auto;-webkit-background-clip:text;background-clip:text;animation:textShine 5s linear infinite}
+@keyframes textShine{to{background-position:200% center}}
+@media (prefers-reduced-motion: reduce){*{animation:none!important}}
 const ICON = {
   maps: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z"/></svg>`,
   wa: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21l1.6-4.6A9 9 0 1 1 8 19.6L3 21z"/><path d="M9 10c0 2.5 2.5 5 5 5l1-1.5-1.8-.9-.7.7c-.8-.4-1.6-1.2-2-2l.7-.7-.9-1.8L9 10z" fill="currentColor" stroke="none"/></svg>`,
