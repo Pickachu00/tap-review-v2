@@ -8,6 +8,7 @@ body{margin:0;min-height:100vh;padding:28px 18px 20px;display:flex;flex-directio
 @keyframes starPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
 @keyframes starBlink{0%,100%{color:#fff;opacity:1}50%{color:#ffe600;opacity:.4}}
 .card{position:relative;overflow:hidden;width:100%;max-width:440px;padding:26px 22px 24px;border-radius:22px;border:1px solid rgba(255,255,255,.12);background:linear-gradient(160deg,#050d26 0%,#0a2a6e 55%,#0050c8 100%);box-shadow:0 20px 50px rgba(0,0,0,.45);animation:rise .9s ease-out both}
+.still .card{animation:none}
 .card::before{content:"";position:absolute;inset:0;border-radius:22px;padding:1px;background:linear-gradient(120deg,transparent 30%,rgba(255,230,0,.85) 50%,transparent 70%);background-size:250% 100%;animation:borderSweep 4s linear infinite;-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none}
 @keyframes rise{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
 @keyframes borderSweep{0%{background-position:150% 0}100%{background-position:-150% 0}}
@@ -17,16 +18,31 @@ h1{margin:0 0 18px;text-align:center;font-family:"Playfair Display",serif;font-s
 .status{margin:0 0 6px;padding:12px;border-radius:12px;background:rgba(40,160,90,.15);border:1px solid rgba(80,220,140,.5);color:#8ff0b8;font-size:14px;line-height:1.5}
 .msg{margin:0 0 6px;padding:14px;border-radius:12px;background:rgba(255,230,0,.08);border:1px solid rgba(255,230,0,.45);color:#ffe600;font-size:14px;line-height:1.5}
 label{display:block;margin:14px 0 6px;font-size:13px;font-weight:500;color:#c3d3f5}
-input,select{width:100%;padding:12px;border-radius:12px;border:2px solid #e8eeff;background:linear-gradient(90deg,#040b22,#0a3c9e);color:#fff;font-family:Montserrat,sans-serif;font-size:15px}
+input,select{width:100%;padding:12px;border-radius:12px;border:2px solid #e8eeff;background:linear-gradient(90deg,#040b22,#0a3c9e);color:#fff;font-family:Montserrat,sans-serif;font-size:15px;transition:border-color .25s,box-shadow .25s}
 input:focus,select:focus{outline:none;border-color:#ffe600;box-shadow:0 0 14px rgba(255,230,0,.55)}
 select option{background:#06245e;color:#fff}
-button{width:100%;margin-top:20px;padding:15px;border:0;border-radius:14px;font-family:Montserrat,sans-serif;font-size:16px;font-weight:700;cursor:pointer;position:relative;overflow:hidden}
+button{width:100%;margin-top:20px;padding:15px;border:0;border-radius:14px;font-family:Montserrat,sans-serif;font-size:16px;font-weight:700;cursor:pointer;position:relative;overflow:hidden;transition:transform .15s,opacity .2s}
+button:active{transform:scale(.98)}
+button:disabled{opacity:.7;cursor:wait}
 .save{background:linear-gradient(90deg,#d4a80c,#f5c518);color:#111;animation:glow 2.8s ease-in-out infinite;--glow:rgba(245,197,24,.75)}
 .reset{margin-top:12px;background:rgba(160,20,40,.25);color:#ff8a8a;border:1px solid rgba(255,90,90,.5)}
 @keyframes glow{0%,100%{box-shadow:0 0 6px var(--glow)}50%{box-shadow:0 0 20px var(--glow)}}
+.toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,24px);opacity:0;width:max-content;max-width:90%;padding:14px 22px;border-radius:14px;background:rgba(8,28,70,.96);border:1px solid rgba(80,220,140,.6);color:#8ff0b8;font-size:14px;font-weight:600;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.45);transition:opacity .45s ease,transform .45s cubic-bezier(.2,.8,.2,1);pointer-events:none;z-index:10}
+.toast.show{opacity:1;transform:translate(-50%,0)}
 .footer{margin-top:22px;font-size:12px;color:#7f93c4;text-align:center;letter-spacing:.3px}
-@media (prefers-reduced-motion: reduce){*{animation:none!important}}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
 `;
+
+const CATEGORIES = ["Restaurant", "Cafe", "Salon", "Retail Shop", "Medical", "Other"];
+
+const TOAST_SCRIPT = `<script>
+(function(){
+  var t = document.getElementById("toast");
+  if (!t) return;
+  requestAnimationFrame(function(){ t.classList.add("show"); });
+  setTimeout(function(){ t.classList.remove("show"); }, 2800);
+})();
+</script>`;
 
 function esc(s) {
   return String(s ?? "").replace(/[&<>"']/g, (c) => ({
@@ -52,14 +68,17 @@ function getCookie(request, name) {
   return match ? match[1] : null;
 }
 
-function page(body) {
+// opts.intro = false  -> no entrance animation (used after a POST so the page doesn't jump)
+// opts.toast          -> success message shown as a sliding toast
+function page(body, opts = {}) {
+  const bodyClass = opts.intro === false ? "still" : "";
+  const toast = opts.toast ? `<div class="toast" id="toast">${esc(opts.toast)}</div>` : "";
+  const script = opts.toast ? TOAST_SCRIPT : "";
   return new Response(
-    `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Card Settings</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet"><style>${CSS}</style></head><body><div class="stars"><span class="star-on">★</span><span class="star-on">★</span><span class="star-on">★</span><span class="star-off">★</span><span class="star-off">★</span></div><div class="card">${body}</div><p class="footer">© 2026 Debajyoti Shaw. All rights reserved.</p></body></html>`,
+    `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Card Settings</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet"><style>${CSS}</style></head><body class="${bodyClass}"><div class="stars"><span class="star-on">★</span><span class="star-on">★</span><span class="star-on">★</span><span class="star-off">★</span><span class="star-off">★</span></div><div class="card">${body}</div><p class="footer">© 2026 Debajyoti Shaw. All rights reserved.</p>${toast}${script}</body></html>`,
     { headers: { "content-type": "text/html; charset=utf-8" } }
   );
 }
-
-const CATEGORIES = ["Restaurant", "Cafe", "Salon", "Retail Shop", "Medical", "Other"];
 
 function renderForm(card, info, notice) {
   const v = (k) => esc(info[k] || "");
@@ -73,7 +92,7 @@ function renderForm(card, info, notice) {
     <div class="head">Business details</div>
     <p class="status">Card ${esc(card)} is unlocked. You can edit its details or reset it.</p>
     ${notice ? `<p class="msg">${esc(notice)}</p>` : ""}
-    <form method="POST">
+    <form method="POST" onsubmit="var b=this.querySelector('button');b.disabled=true;b.textContent='Saving...';">
       <label>Business Name</label>
       <input name="name" value="${v("name")}" required>
       <label>City / Area Location</label>
@@ -116,7 +135,10 @@ export async function onRequest(context) {
     await env.TAPREVIEW.delete("pin:" + card);
     await env.TAPREVIEW.delete("info:" + card);
     await env.TAPREVIEW.delete("session:" + token);
-    return page(`<h1>Card ${esc(card)}</h1><p class="msg">Card has been reset to available.</p>`);
+    return page(`<h1>Card ${esc(card)}</h1><p class="msg">Card has been reset to available.</p>`, {
+      intro: false,
+      toast: "Card has been reset to available.",
+    });
   }
 
   const data = {
@@ -129,12 +151,13 @@ export async function onRequest(context) {
     facebook: clean(body.get("facebook"), 300),
   };
 
-  if (!data.name) return page(renderForm(card, data, "Business name is required."));
-  if (!isHttps(data.google)) return page(renderForm(card, data, "Google link must start with https://"));
-  if (!isHttps(data.instagram)) return page(renderForm(card, data, "Instagram link must start with https://"));
-  if (!isHttps(data.facebook)) return page(renderForm(card, data, "Facebook link must start with https://"));
+  // Validation errors stay inline, next to the form
+  if (!data.name) return page(renderForm(card, data, "Business name is required."), { intro: false });
+  if (!isHttps(data.google)) return page(renderForm(card, data, "Google link must start with https://"), { intro: false });
+  if (!isHttps(data.instagram)) return page(renderForm(card, data, "Instagram link must start with https://"), { intro: false });
+  if (!isHttps(data.facebook)) return page(renderForm(card, data, "Facebook link must start with https://"), { intro: false });
   if (data.whatsapp && data.whatsapp.length < 10) {
-    return page(renderForm(card, data, "WhatsApp number must be at least 10 digits."));
+    return page(renderForm(card, data, "WhatsApp number must be at least 10 digits."), { intro: false });
   }
 
   await env.TAPREVIEW.put("info:" + card, JSON.stringify(data));
@@ -147,5 +170,9 @@ export async function onRequest(context) {
     await env.TAPREVIEW.delete(card);
   }
 
-  return page(renderForm(card, data, "Card details saved."));
+  // Success: no card re-animation, message slides in as a toast
+  return page(renderForm(card, data, ""), {
+    intro: false,
+    toast: "Card details saved successfully.",
+  });
 }
