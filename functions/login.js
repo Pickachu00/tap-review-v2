@@ -62,7 +62,7 @@ async function sha256(text) {
 }
 
 const MAX_FAILS = 5;
-const LOCK_SECONDS = 900;      // 15 minutes
+const LOCK_SECONDS = 120;      // 2 minutes
 const SESSION_SECONDS = 1800;  // 30 minutes
 
 export async function onRequest(context) {
@@ -83,7 +83,7 @@ export async function onRequest(context) {
   const failKey = "fail:" + card;
   const fails = parseInt((await env.TAPREVIEW.get(failKey)) || "0", 10);
   if (fails >= MAX_FAILS) {
-    return page(renderLogin(card, "Too many wrong attempts. Try again after 15 minutes."));
+    return page(renderLogin(card, "Too many wrong attempts. Try again after 2 minutes."));
   }
 
   const savedHash = await env.TAPREVIEW.get("pin:" + card);
