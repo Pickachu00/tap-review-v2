@@ -18,7 +18,7 @@ h1{margin:0 0 18px;text-align:center;font-family:"Playfair Display",serif;font-s
 .status{margin:0 0 6px;padding:12px;border-radius:12px;background:rgba(40,160,90,.15);border:1px solid rgba(80,220,140,.5);color:#8ff0b8;font-size:14px;line-height:1.5}
 .msg{margin:0 0 6px;padding:14px;border-radius:12px;background:rgba(255,230,0,.08);border:1px solid rgba(255,230,0,.45);color:#ffe600;font-size:14px;line-height:1.5}
 label{display:block;margin:14px 0 6px;font-size:13px;font-weight:500;color:#c3d3f5}
-.hint{margin:-2px 0 6px;font-size:11px;color:#9fb6e8;letter-spacing:.3px}
+.hint{margin:-2px 0 6px;font-size:11px;color:#9fb6e8;letter-spacing:.3px;line-height:1.5}
 input,select,textarea{width:100%;padding:12px;border-radius:12px;border:2px solid #e8eeff;background:linear-gradient(90deg,#040b22,#0a3c9e);color:#fff;font-family:Montserrat,sans-serif;font-size:15px;color-scheme:dark;transition:border-color .25s,box-shadow .25s}
 textarea{resize:vertical;line-height:1.5}
 input:focus,select:focus,textarea:focus{outline:none;border-color:#ffe600;box-shadow:0 0 14px rgba(255,230,0,.55)}
@@ -43,58 +43,14 @@ button:disabled{opacity:.7;cursor:wait}
 `;
 
 const CATEGORIES = [
-  "Accountant",
-  "Bakery",
-  "Bank",
-  "Bar & Lounge",
-  "Beauty Parlour",
-  "Bookstore",
-  "Cafe",
-  "Car Service",
-  "Clinic",
-  "Clothing",
-  "Coaching",
-  "Coffee Shop",
-  "Courier",
-  "Cyber Cafe",
-  "Dental Clinic",
-  "Digital Service Centre",
-  "Electronics",
-  "Event Planning",
-  "Fast Food",
-  "Florist",
-  "Footwear",
-  "Garage",
-  "Grocery",
-  "Gym",
-  "Hardware",
-  "Hospital",
-  "Hotel",
-  "Insurance",
-  "IT Services",
-  "Jewellery",
-  "Juice Bar",
-  "Laundry",
-  "Lawyer",
-  "Medical",
-  "Mobile Shop",
-  "Pet Shop",
-  "Petrol Pump",
-  "Pharmacy",
-  "Photo Studio",
-  "Printing",
-  "Real Estate",
-  "Restaurant",
-  "Retail Shop",
-  "Salon",
-  "School",
-  "Spa",
-  "Stationery",
-  "Sweet Shop",
-  "Tailor",
-  "Travel Agency",
-  "Tuition Centre",
-  "Other"
+  "Accountant", "Bakery", "Bank", "Bar & Lounge", "Beauty Parlour", "Bookstore", "Cafe",
+  "Car Service", "Clinic", "Clothing", "Coaching", "Coffee Shop", "Courier", "Cyber Cafe",
+  "Dental Clinic", "Digital Service Centre", "Electronics", "Event Planning", "Fast Food",
+  "Florist", "Footwear", "Garage", "Grocery", "Gym", "Hardware", "Hospital", "Hotel",
+  "Insurance", "IT Services", "Jewellery", "Juice Bar", "Laundry", "Lawyer", "Medical",
+  "Mobile Shop", "Pet Shop", "Petrol Pump", "Pharmacy", "Photo Studio", "Printing",
+  "Real Estate", "Restaurant", "Retail Shop", "Salon", "School", "Spa", "Stationery",
+  "Sweet Shop", "Tailor", "Travel Agency", "Tuition Centre", "Other"
 ];
 
 const DAYS = [
@@ -103,6 +59,7 @@ const DAYS = [
 ];
 
 const MAX_SERVICES = 20;
+const MAX_MENU = 150;
 
 const TOAST_SCRIPT = `<script>
 (function(){
@@ -131,7 +88,6 @@ function isHttps(u) {
   return !u || /^https:\/\/\S+$/.test(u);
 }
 
-// Turns the textarea text (one service per line) into a clean array
 function parseServices(raw) {
   return String(raw ?? "")
     .split(/\r?\n/)
@@ -140,7 +96,47 @@ function parseServices(raw) {
     .slice(0, MAX_SERVICES);
 }
 
-// Reads the 7 day rows. A day is null (closed) unless both times are given and it is not ticked "Closed".
+// "# Starters" starts a category. "Name | Price | Description" is one item.
+function parseMenu(raw) {
+  const items = [];
+  let cat = "";
+  for (const line of String(raw ?? "").split(/\r?\n/)) {
+    const t = line.trim();
+    if (!t) continue;
+    if (t.startsWith("#")) {
+      cat = t.replace(/^#+/, "").trim().slice(0, 40);
+      continue;
+    }
+    const parts = t.split("|").map((p) => p.trim());
+    const name = (parts[0] || "").slice(0, 80);
+    if (!name) continue;
+    items.push({
+      cat,
+      name,
+      price: (parts[1] || "").slice(0, 20),
+      desc: parts.slice(2).join(" | ").slice(0, 140),
+    });
+    if (items.length >= MAX_MENU) break;
+  }
+  return items;
+}
+
+// Reverse of parseMenu, so the textarea shows what was saved
+function menuToText(items) {
+  const lines = [];
+  let cat = null;
+  for (const it of Array.isArray(items) ? items : []) {
+    if (it.cat !== cat) {
+      if (it.cat) lines.push("# " + it.cat);
+      cat = it.cat;
+    }
+    const parts = [it.name, it.price || ""];
+    if (it.desc) parts.push(it.desc);
+    lines.push(parts.join(" | ").replace(/ \| $/, ""));
+  }
+  return lines.join("\n");
+}
+
 function parseHours(body) {
   const out = {};
   for (const [key] of DAYS) {
@@ -159,8 +155,6 @@ function getCookie(request, name) {
   return match ? match[1] : null;
 }
 
-// opts.intro = false  -> no entrance animation (used after a POST so the page doesn't jump)
-// opts.toast          -> success message shown as a sliding toast
 function page(body, opts = {}) {
   const bodyClass = opts.intro === false ? "still" : "";
   const toast = opts.toast ? `<div class="toast" id="toast">${esc(opts.toast)}</div>` : "";
@@ -175,7 +169,7 @@ function renderHours(hours) {
   const rows = DAYS.map(([key, label]) => {
     const h = hours && hours[key];
     const closed = !h;
-    return `<div class="hr${closed ? " closed" : ""}" id="row_${key}">
+    return `<div class="hr${closed ? " closed" : ""}">
       <span class="day">${label}</span>
       <input type="time" name="h_${key}_o" value="${esc(h ? h.o : "")}" aria-label="${label} opens">
       <input type="time" name="h_${key}_c" value="${esc(h ? h.c : "")}" aria-label="${label} closes">
@@ -213,9 +207,9 @@ function renderForm(card, info, notice) {
       <input name="instagram" type="url" value="${v("instagram")}" placeholder="https://instagram.com/yourhandle">
       <label>Facebook Page Link (Optional)</label>
       <input name="facebook" type="url" value="${v("facebook")}" placeholder="https://facebook.com/yourpage">
-      <label>Menu Link (Optional)</label>
-      <p class="hint">মেনুর ছবি বা PDF-এর https লিংক দিন।</p>
-      <input name="menu" type="url" value="${v("menu")}" placeholder="https://...">
+      <label>Menu (Optional)</label>
+      <p class="hint">প্রতি লাইনে একটা আইটেম: <b>নাম | দাম | বিবরণ</b> (বিবরণ ঐচ্ছিক)। ক্যাটাগরির জন্য আগে <b># Starters</b> লিখুন।</p>
+      <textarea name="menu" rows="10" placeholder="# Starters&#10;Chicken Roll | 120 | Spicy, with onion&#10;Veg Chop | 60&#10;# Main Course&#10;Kolkata Biryani | 250 | With egg &amp; potato">${esc(menuToText(info.menuItems))}</textarea>
       <label>Opening Hours (Optional)</label>
       <p class="hint">প্রতিদিনের খোলার ও বন্ধের সময় দিন। বন্ধ থাকলে "Closed" টিক দিন।</p>
       ${renderHours(info.hours)}
@@ -264,17 +258,15 @@ export async function onRequest(context) {
     whatsapp: digitsOnly(body.get("whatsapp")),
     instagram: clean(body.get("instagram"), 300),
     facebook: clean(body.get("facebook"), 300),
-    menu: clean(body.get("menu"), 500),
+    menuItems: parseMenu(body.get("menu")),
     hours: parseHours(body),
     services: parseServices(body.get("services")),
   };
 
-  // Validation errors stay inline, next to the form
   if (!data.name) return page(renderForm(card, data, "Business name is required."), { intro: false });
   if (!isHttps(data.google)) return page(renderForm(card, data, "Google link must start with https://"), { intro: false });
   if (!isHttps(data.instagram)) return page(renderForm(card, data, "Instagram link must start with https://"), { intro: false });
   if (!isHttps(data.facebook)) return page(renderForm(card, data, "Facebook link must start with https://"), { intro: false });
-  if (!isHttps(data.menu)) return page(renderForm(card, data, "Menu link must start with https://"), { intro: false });
   if (data.whatsapp && data.whatsapp.length < 10) {
     return page(renderForm(card, data, "WhatsApp number must be at least 10 digits."), { intro: false });
   }
@@ -289,7 +281,6 @@ export async function onRequest(context) {
     await env.TAPREVIEW.delete(card);
   }
 
-  // Success: no card re-animation, message slides in as a toast
   return page(renderForm(card, data, ""), {
     intro: false,
     toast: "Card details saved successfully.",
