@@ -33,7 +33,16 @@ button:disabled{opacity:.7;cursor:wait}
 @media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
 `;
 
-const CATEGORIES = ["Restaurant", "Cafe", "Salon", "Retail Shop", "Medical", "Other"];
+const CATEGORIES = [
+  "Restaurant", "Cafe", "Sweet Shop", "Bakery", "Fast Food", "Bar & Lounge",
+  "Hotel", "Salon", "Beauty Parlour", "Spa", "Gym", "Medical", "Clinic", "Pharmacy",
+  "Dental Clinic", "Hospital", "Retail Shop", "Grocery", "Mobile Shop", "Electronics",
+  "Clothing", "Footwear", "Jewellery", "Hardware", "Stationery", "Bookstore",
+  "Tuition Centre", "School", "Coaching", "Tailor", "Laundry", "Car Service",
+  "Garage", "Petrol Pump", "Coffee Shop", "Juice Bar", "Pet Shop", "Florist",
+  "Photo Studio", "Printing", "Event Planning", "Travel Agency", "Real Estate",
+  "Lawyer", "Accountant", "Insurance", "Bank", "IT Services", "Courier", "Other"
+];
 
 const TOAST_SCRIPT = `<script>
 (function(){
