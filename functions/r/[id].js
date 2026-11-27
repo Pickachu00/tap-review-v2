@@ -14,6 +14,11 @@ body{margin:0;min-height:100vh;padding:28px 18px 20px;display:flex;flex-directio
 .shop{margin:0;font-family:"Playfair Display",serif;font-size:30px;font-weight:800;line-height:1.2;letter-spacing:.3px;cursor:pointer;user-select:none;-webkit-user-select:none;color:transparent;background:linear-gradient(90deg,#ffffff 0%,#ffe600 40%,#ffffff 60%);background-size:200% auto;-webkit-background-clip:text;background-clip:text;animation:textShine 5s linear infinite}
 @keyframes textShine{to{background-position:200% center}}
 .sub{margin:12px 0 0;font-size:12px;font-weight:500;letter-spacing:2.5px;text-transform:uppercase;color:#9fb6e8}
+.hours{display:flex;align-items:center;justify-content:center;gap:8px;margin:10px 0 0;font-size:13px;color:#d6e2ff}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+.dot.on{background:#25d366;box-shadow:0 0 8px #25d366;animation:blink 1.8s ease-in-out infinite}
+.dot.off{background:#f87171;box-shadow:0 0 6px #f87171}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
 .btn{position:relative;overflow:hidden;display:flex;align-items:center;justify-content:flex-start;gap:14px;width:100%;padding:14px 18px;margin-top:12px;border-radius:14px;font-family:Montserrat,sans-serif;font-weight:600;font-size:15px;text-decoration:none;color:#fff;border:0;cursor:pointer;animation:glow 2.8s ease-in-out infinite;transition:transform .2s}
 .btn:hover{transform:translateY(-2px)}
 .btn::after{content:"";position:absolute;top:0;left:-75%;width:50%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.45),transparent);transform:skewX(-20deg);animation:shine 3.5s ease-in-out infinite;pointer-events:none}
@@ -25,6 +30,7 @@ body{margin:0;min-height:100vh;padding:28px 18px 20px;display:flex;flex-directio
 .insta{background:linear-gradient(90deg,#f58529,#dd2a7b,#8134af);--glow:rgba(221,42,123,.75)}
 .fb{background:#1877f2;--glow:rgba(24,119,242,.75)}
 .svc-btn{background:linear-gradient(90deg,#1e3a8a,#3b82f6);color:#fff;--glow:rgba(59,130,246,.75)}
+.menu-btn{background:linear-gradient(90deg,#7c2d12,#c2410c 60%,#ea580c);color:#fff;--glow:rgba(234,88,12,.75)}
 .btn-label{flex:1;text-align:center;padding-right:30px}
 @keyframes glow{0%,100%{box-shadow:0 0 6px var(--glow)}50%{box-shadow:0 0 20px var(--glow)}}
 .msg{margin:14px 0 0;padding:14px;border-radius:12px;background:rgba(255,230,0,.08);border:1px solid rgba(255,230,0,.45);color:#ffe600;font-size:14px;line-height:1.5}
@@ -65,6 +71,7 @@ const ICON = {
   ig: `<svg viewBox="0 0 24 24" fill="none" stroke="#dd2a7b" stroke-width="2.2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.2" fill="#dd2a7b" stroke="none"/></svg>`,
   fb: `<svg viewBox="0 0 24 24" fill="#1877f2"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.3v7A10 10 0 0 0 22 12z"/></svg>`,
   svc: `<svg viewBox="0 0 24 24" fill="none" stroke="#1e3a8a" stroke-width="2.4" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg>`,
+  menu: `<svg viewBox="0 0 24 24" fill="none" stroke="#c2410c" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h11a3 3 0 0 1 3 3v13H7a3 3 0 0 1-3-3z"/><path d="M8 9h6M8 13h6"/></svg>`,
 };
 
 function esc(s) {
@@ -73,7 +80,41 @@ function esc(s) {
   }[c]));
 }
 
-// extra = HTML placed OUTSIDE the card (so fixed overlays aren't trapped by its transform)
+// "10:30" -> "10:30 AM"
+function fmtTime(t) {
+  const [h, m] = t.split(":").map(Number);
+  const ap = h >= 12 ? "PM" : "AM";
+  const hh = ((h + 11) % 12) + 1;
+  return hh + ":" + String(m).padStart(2, "0") + " " + ap;
+}
+
+function toMin(t) {
+  const [h, m] = t.split(":").map(Number);
+  return h * 60 + m;
+}
+
+// info.hours expected shape: { mon:{o:"10:00",c:"22:00"}, ..., sun:null }
+// Returns a short status line for the current time in India (IST)
+function hoursLine(info) {
+  const h = info.hours;
+  if (!h || typeof h !== "object") return "";
+  const keys = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
+  const ist = new Date(Date.now() + 5.5 * 3600 * 1000);
+  const today = h[keys[ist.getUTCDay()]];
+  const valid = (x) => x && /^\d{2}:\d{2}$/.test(x.o || "") && /^\d{2}:\d{2}$/.test(x.c || "");
+  if (!valid(today)) {
+    return `<p class="hours"><span class="dot off"></span>Closed today</p>`;
+  }
+  const now = ist.getUTCHours() * 60 + ist.getUTCMinutes();
+  const o = toMin(today.o);
+  const c = toMin(today.c);
+  const isOpen = c > o ? now >= o && now < c : now >= o || now < c;
+  const text = isOpen
+    ? `Open now · closes ${fmtTime(today.c)}`
+    : `Closed now · opens ${fmtTime(today.o)}`;
+  return `<p class="hours"><span class="dot ${isOpen ? "on" : "off"}"></span>${esc(text)}</p>`;
+}
+
 function page(body, script = "", extra = "") {
   return new Response(
     `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Review Us</title><link rel="icon" type="image/png" href="/favicon.png"><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet"><style>${CSS}</style></head><body><div class="stars"><span class="star-on">★</span><span class="star-on">★</span><span class="star-on">★</span><span class="star-off">★</span><span class="star-off">★</span></div><div class="card">${body}</div>${extra}<p class="footer">© 2026 Debajyoti Shaw. All rights reserved.</p>${script}</body></html>`,
@@ -95,9 +136,11 @@ async function logScan(env, card, request) {
 }
 
 // One button: icon badge on the left, label centred
-function btn(cls, href, icon, label, extraAttrs = "") {
-  return `<a class="btn ${cls}" href="${href}" target="_blank" rel="noopener" ${extraAttrs}><span class="ico">${icon}</span><span class="btn-label">${label}</span></a>`;
+function btn(cls, href, icon, label) {
+  return `<a class="btn ${cls}" href="${href}" target="_blank" rel="noopener"><span class="ico">${icon}</span><span class="btn-label">${label}</span></a>`;
 }
+
+const isHttps = (u) => typeof u === "string" && /^https:\/\/\S+$/.test(u);
 
 export async function onRequest(context) {
   const { env, request } = context;
@@ -133,6 +176,9 @@ export async function onRequest(context) {
   if (info.facebook) {
     buttons.push(btn("fb", esc(info.facebook), ICON.fb, "Like on Facebook"));
   }
+  if (isHttps(info.menu)) {
+    buttons.push(btn("menu-btn", esc(info.menu), ICON.menu, "View Menu"));
+  }
 
   const services = Array.isArray(info.services) ? info.services : [];
   if (services.length) {
@@ -144,6 +190,7 @@ export async function onRequest(context) {
   const body = `
     <h2 class="shop" id="shop">${esc(info.name)}</h2>
     ${sub ? `<p class="sub">${sub}</p>` : ""}
+    ${hoursLine(info)}
     ${buttons.length ? buttons.join("") : `<p class="msg">No links added yet.</p>`}`;
 
   const svcPanel = services.length ? `
