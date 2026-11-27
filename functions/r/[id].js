@@ -30,14 +30,14 @@ body{margin:0;min-height:100vh;padding:28px 18px 20px;display:flex;flex-directio
 .insta{background:linear-gradient(90deg,#f58529,#dd2a7b,#8134af);--glow:rgba(221,42,123,.75)}
 .fb{background:#1877f2;--glow:rgba(24,119,242,.75)}
 .svc-btn{background:linear-gradient(90deg,#1e3a8a,#3b82f6);color:#fff;--glow:rgba(59,130,246,.75)}
-.menu-btn{background:linear-gradient(90deg,#7c2d12,#c2410c 60%,#ea580c);color:#fff;--glow:rgba(234,88,12,.75)}
+.menu-btn{background:linear-gradient(90deg,#3d2506,#8a5a12 55%,#c9961f);color:#fff7e0;--glow:rgba(201,150,31,.75)}
 .btn-label{flex:1;text-align:center;padding-right:30px}
 @keyframes glow{0%,100%{box-shadow:0 0 6px var(--glow)}50%{box-shadow:0 0 20px var(--glow)}}
 .msg{margin:14px 0 0;padding:14px;border-radius:12px;background:rgba(255,230,0,.08);border:1px solid rgba(255,230,0,.45);color:#ffe600;font-size:14px;line-height:1.5}
 .footer{margin-top:22px;font-size:12px;color:#7f93c4;text-align:center;letter-spacing:.3px}
 
-/* Services panel */
-.overlay{position:fixed;inset:0;background:rgba(2,6,20,.75);display:none;align-items:flex-end;justify-content:center;z-index:50;transition:background .3s}
+/* Shared sheet (services + menu) */
+.overlay{position:fixed;inset:0;background:rgba(2,6,20,.75);display:none;align-items:flex-end;justify-content:center;z-index:50}
 .overlay.open{display:flex;animation:fadeIn .3s ease-out}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 .sheet{display:flex;flex-direction:column;width:100%;max-width:440px;height:80vh;background:#071437;border-radius:24px 24px 0 0;border:1px solid rgba(255,230,0,.2);box-shadow:0 -10px 50px rgba(0,0,0,.6),0 0 30px rgba(255,230,0,.08);overflow:hidden;animation:up .45s cubic-bezier(.2,.8,.2,1)}
@@ -48,6 +48,11 @@ body{margin:0;min-height:100vh;padding:28px 18px 20px;display:flex;flex-directio
 .sheet-head .grip{width:44px;height:5px;border-radius:99px;background:rgba(255,255,255,.25);margin:0 auto 12px}
 .sheet h3{margin:0;font-family:"Playfair Display",serif;font-size:24px;font-weight:800;color:#ffe600;text-shadow:0 0 18px rgba(255,230,0,.35)}
 .sheet .sub2{margin:6px 0 0;font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:#9fb6e8}
+.sheet-foot{flex:0 0 auto;padding:12px 20px 20px;border-top:1px solid rgba(120,160,255,.2);background:#071437}
+.close{width:100%;padding:14px;border:0;border-radius:14px;background:linear-gradient(90deg,#d4a80c,#f5c518);color:#111;font-weight:700;font-size:15px;cursor:pointer;font-family:Montserrat,sans-serif;animation:glow 2.8s ease-in-out infinite;transition:transform .15s;--glow:rgba(245,197,24,.7)}
+.close:active{transform:scale(.97)}
+
+/* Services list */
 .svc-list{flex:1 1 auto;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px 20px;background:#071437}
 .svc-list::-webkit-scrollbar{width:4px}
 .svc-list::-webkit-scrollbar-thumb{background:rgba(255,230,0,.5);border-radius:99px}
@@ -58,20 +63,41 @@ body{margin:0;min-height:100vh;padding:28px 18px 20px;display:flex;flex-directio
 .svc b{flex-shrink:0;width:30px;height:30px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#fff6a8,#ffe600 55%,#d4a80c);color:#111;display:flex;align-items:center;justify-content:center;font-size:13px;box-shadow:0 0 12px rgba(255,230,0,.5);animation:pop 2.4s ease-in-out infinite}
 @keyframes pop{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
 .svc span{position:relative;color:#f1f5ff}
-.sheet-foot{flex:0 0 auto;padding:12px 20px 20px;border-top:1px solid rgba(120,160,255,.2);background:#071437}
-.close{width:100%;padding:14px;border:0;border-radius:14px;background:linear-gradient(90deg,#d4a80c,#f5c518);color:#111;font-weight:700;font-size:15px;cursor:pointer;font-family:Montserrat,sans-serif;animation:glow 2.8s ease-in-out infinite;transition:transform .15s;--glow:rgba(245,197,24,.7)}
-.close:active{transform:scale(.97)}
-@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+
+/* Menu sheet: restaurant style */
+.msheet{background:linear-gradient(175deg,#1a1205 0%,#2a1c07 50%,#120c03 100%);border-color:rgba(201,150,31,.35);box-shadow:0 -10px 50px rgba(0,0,0,.7),0 0 40px rgba(201,150,31,.12)}
+.msheet .sheet-head{background:transparent;border-bottom:1px solid rgba(201,150,31,.35)}
+.msheet .sheet-head::after{background:linear-gradient(90deg,transparent,#e8b64a,transparent)}
+.msheet .sheet-foot{background:transparent;border-top:1px solid rgba(201,150,31,.25)}
+.msheet h3{font-size:26px;color:#f3d27a;text-shadow:0 0 18px rgba(232,182,74,.35)}
+.orn{font-size:12px;letter-spacing:6px;color:#c9961f;margin:0 0 4px}
+.msheet .sub2{color:#c9b68a}
+.mlist{flex:1 1 auto;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:18px 22px 10px}
+.mlist::-webkit-scrollbar{width:3px}
+.mlist::-webkit-scrollbar-thumb{background:rgba(201,150,31,.6);border-radius:99px}
+.mg{margin-bottom:22px}
+.mg h4{margin:0 0 12px;display:flex;align-items:center;gap:10px;font-family:"Playfair Display",serif;font-size:18px;font-weight:700;letter-spacing:1px;color:#f3d27a}
+.mg h4::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,#c9961f,transparent)}
+.mi{padding:8px 0 12px;border-bottom:1px dashed rgba(201,150,31,.2);opacity:0;transform:translateY(10px);animation:miIn .5s ease-out forwards}
+@keyframes miIn{to{opacity:1;transform:none}}
+.mi-row{display:flex;align-items:baseline;gap:8px;font-size:15px;color:#fbf1d6}
+.mi-name{flex:0 1 auto;font-weight:600}
+.mi-dots{flex:1;min-width:14px;border-bottom:1px dotted rgba(201,150,31,.55);transform:translateY(-4px)}
+.mi-price{flex-shrink:0;font-weight:700;color:#f5c518;text-shadow:0 0 10px rgba(245,197,24,.35)}
+.mi-desc{margin:4px 0 0;font-size:12.5px;font-style:italic;line-height:1.45;color:#c9b68a}
+.mclose{width:100%;padding:14px;border:0;border-radius:14px;background:linear-gradient(90deg,#8a5a12,#c9961f);color:#fff7e0;font-weight:700;font-size:15px;cursor:pointer;font-family:Montserrat,sans-serif;transition:transform .15s}
+.mclose:active{transform:scale(.97)}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}.mi,.svc{opacity:1;transform:none}}
 `;
 
-// Small, same-size icons. Each sits inside a white badge so all brands look uniform.
+// Small, same-size icons inside white badges
 const ICON = {
   maps: `<svg viewBox="0 0 24 24" fill="#d4a80c"><path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z"/></svg>`,
   wa: `<svg viewBox="0 0 24 24" fill="#25d366"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.6.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.3.1-.2 0-.3 0-.5l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c2.2.9 2.6.7 3.1.7a2.6 2.6 0 0 0 1.7-1.2 2.1 2.1 0 0 0 .1-1.2c-.1-.1-.2-.2-.4-.3z"/></svg>`,
   ig: `<svg viewBox="0 0 24 24" fill="none" stroke="#dd2a7b" stroke-width="2.2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.2" fill="#dd2a7b" stroke="none"/></svg>`,
   fb: `<svg viewBox="0 0 24 24" fill="#1877f2"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.3v7A10 10 0 0 0 22 12z"/></svg>`,
   svc: `<svg viewBox="0 0 24 24" fill="none" stroke="#1e3a8a" stroke-width="2.4" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg>`,
-  menu: `<svg viewBox="0 0 24 24" fill="none" stroke="#c2410c" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h11a3 3 0 0 1 3 3v13H7a3 3 0 0 1-3-3z"/><path d="M8 9h6M8 13h6"/></svg>`,
+  menu: `<svg viewBox="0 0 24 24" fill="none" stroke="#8a5a12" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h11a3 3 0 0 1 3 3v13H7a3 3 0 0 1-3-3z"/><path d="M8 9h6M8 13h6"/></svg>`,
 };
 
 function esc(s) {
@@ -80,7 +106,6 @@ function esc(s) {
   }[c]));
 }
 
-// "10:30" -> "10:30 AM"
 function fmtTime(t) {
   const [h, m] = t.split(":").map(Number);
   const ap = h >= 12 ? "PM" : "AM";
@@ -93,8 +118,7 @@ function toMin(t) {
   return h * 60 + m;
 }
 
-// info.hours expected shape: { mon:{o:"10:00",c:"22:00"}, ..., sun:null }
-// Returns a short status line for the current time in India (IST)
+// Status line for the current time in India (IST)
 function hoursLine(info) {
   const h = info.hours;
   if (!h || typeof h !== "object") return "";
@@ -122,7 +146,6 @@ function page(body, script = "", extra = "") {
   );
 }
 
-// Logs one scan. Never blocks the page: errors are ignored.
 async function logScan(env, card, request) {
   try {
     if (!env.DB) return;
@@ -135,12 +158,68 @@ async function logScan(env, card, request) {
   }
 }
 
-// One button: icon badge on the left, label centred
 function btn(cls, href, icon, label) {
   return `<a class="btn ${cls}" href="${href}" target="_blank" rel="noopener"><span class="ico">${icon}</span><span class="btn-label">${label}</span></a>`;
 }
 
 const isHttps = (u) => typeof u === "string" && /^https:\/\/\S+$/.test(u);
+
+// Groups menu items by category, keeping the order the owner typed
+function menuPanel(info) {
+  const items = Array.isArray(info.menuItems) ? info.menuItems : [];
+  const groups = [];
+  for (const it of items) {
+    let g = groups.find((x) => x.cat === (it.cat || ""));
+    if (!g) {
+      g = { cat: it.cat || "", items: [] };
+      groups.push(g);
+    }
+    g.items.push(it);
+  }
+  let idx = 0;
+  const html = groups.map((g) => `
+    <div class="mg">
+      ${g.cat ? `<h4>${esc(g.cat)}</h4>` : ""}
+      ${g.items.map((it) => {
+        const delay = (idx++ * 0.06).toFixed(2);
+        return `<div class="mi" style="animation-delay:${delay}s">
+          <div class="mi-row"><span class="mi-name">${esc(it.name)}</span><span class="mi-dots"></span>${it.price ? `<span class="mi-price">${esc(it.price)}</span>` : ""}</div>
+          ${it.desc ? `<p class="mi-desc">${esc(it.desc)}</p>` : ""}
+        </div>`;
+      }).join("")}
+    </div>`).join("");
+
+  return `
+    <div class="overlay" id="menuOverlay">
+      <div class="sheet msheet">
+        <div class="sheet-head">
+          <div class="grip"></div>
+          <p class="orn">✦ ✦ ✦</p>
+          <h3>Our Menu</h3>
+          <p class="sub2">${esc(info.name)}</p>
+        </div>
+        <div class="mlist" id="menuList">${html}</div>
+        <div class="sheet-foot"><button class="mclose" type="button" id="menuClose">Close</button></div>
+      </div>
+    </div>`;
+}
+
+function servicesPanel(info, services) {
+  return `
+    <div class="overlay" id="svcOverlay">
+      <div class="sheet">
+        <div class="sheet-head">
+          <div class="grip"></div>
+          <h3>Our Services</h3>
+          <p class="sub2">${esc(info.name)}</p>
+        </div>
+        <div class="svc-list" id="svcList">
+          ${services.map((s, i) => `<div class="svc" style="animation-delay:${i * 0.06}s"><b>${i + 1}</b><span>${esc(s)}</span></div>`).join("")}
+        </div>
+        <div class="sheet-foot"><button class="close" type="button" id="svcClose">Close</button></div>
+      </div>
+    </div>`;
+}
 
 export async function onRequest(context) {
   const { env, request } = context;
@@ -153,7 +232,6 @@ export async function onRequest(context) {
     return Response.redirect(new URL("/activate?card=" + id, request.url).href, 302);
   }
 
-  // Count this scan (kept out of the critical path)
   const logging = logScan(env, id, request);
   context.waitUntil ? context.waitUntil(logging) : await logging;
 
@@ -176,8 +254,10 @@ export async function onRequest(context) {
   if (info.facebook) {
     buttons.push(btn("fb", esc(info.facebook), ICON.fb, "Like on Facebook"));
   }
-  if (isHttps(info.menu)) {
-    buttons.push(btn("menu-btn", esc(info.menu), ICON.menu, "View Menu"));
+
+  const hasMenu = Array.isArray(info.menuItems) && info.menuItems.length > 0;
+  if (hasMenu) {
+    buttons.push(`<button class="btn menu-btn" type="button" id="menuOpen"><span class="ico">${ICON.menu}</span><span class="btn-label">View Menu</span></button>`);
   }
 
   const services = Array.isArray(info.services) ? info.services : [];
@@ -193,22 +273,7 @@ export async function onRequest(context) {
     ${hoursLine(info)}
     ${buttons.length ? buttons.join("") : `<p class="msg">No links added yet.</p>`}`;
 
-  const svcPanel = services.length ? `
-    <div class="overlay" id="svcOverlay">
-      <div class="sheet">
-        <div class="sheet-head">
-          <div class="grip"></div>
-          <h3>Our Services</h3>
-          <p class="sub2">${esc(info.name)}</p>
-        </div>
-        <div class="svc-list" id="svcList">
-          ${services.map((s, i) => `<div class="svc" style="animation-delay:${i * 0.06}s"><b>${i + 1}</b><span>${esc(s)}</span></div>`).join("")}
-        </div>
-        <div class="sheet-foot">
-          <button class="close" type="button" id="svcClose">Close</button>
-        </div>
-      </div>
-    </div>` : "";
+  const extra = (hasMenu ? menuPanel(info) : "") + (services.length ? servicesPanel(info, services) : "");
 
   const script = `<script>
 (function(){
@@ -221,19 +286,22 @@ export async function onRequest(context) {
     if (taps.length >= 3) { window.location.href = "/login?card=${id}"; }
   });
 
-  var o = document.getElementById("svcOverlay");
-  var ob = document.getElementById("svcOpen");
-  var list = document.getElementById("svcList");
-  if (ob && o) {
+  function wire(openId, overlayId, closeId, listId) {
+    var ob = document.getElementById(openId);
+    var o = document.getElementById(overlayId);
+    if (!ob || !o) return;
     ob.addEventListener("click", function(){
       o.classList.add("open");
-      if (list) list.scrollTop = 0;
+      var l = document.getElementById(listId);
+      if (l) l.scrollTop = 0;
     });
-    document.getElementById("svcClose").addEventListener("click", function(){ o.classList.remove("open"); });
+    document.getElementById(closeId).addEventListener("click", function(){ o.classList.remove("open"); });
     o.addEventListener("click", function(e){ if (e.target === o) o.classList.remove("open"); });
   }
+  wire("menuOpen", "menuOverlay", "menuClose", "menuList");
+  wire("svcOpen", "svcOverlay", "svcClose", "svcList");
 })();
 </script>`;
 
-  return page(body, script, svcPanel);
+  return page(body, script, extra);
 }
