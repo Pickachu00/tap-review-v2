@@ -18,8 +18,10 @@ h1{margin:0 0 18px;text-align:center;font-family:"Playfair Display",serif;font-s
 .status{margin:0 0 6px;padding:12px;border-radius:12px;background:rgba(40,160,90,.15);border:1px solid rgba(80,220,140,.5);color:#8ff0b8;font-size:14px;line-height:1.5}
 .msg{margin:0 0 6px;padding:14px;border-radius:12px;background:rgba(255,230,0,.08);border:1px solid rgba(255,230,0,.45);color:#ffe600;font-size:14px;line-height:1.5}
 label{display:block;margin:14px 0 6px;font-size:13px;font-weight:500;color:#c3d3f5}
-input,select{width:100%;padding:12px;border-radius:12px;border:2px solid #e8eeff;background:linear-gradient(90deg,#040b22,#0a3c9e);color:#fff;font-family:Montserrat,sans-serif;font-size:15px;transition:border-color .25s,box-shadow .25s}
-input:focus,select:focus{outline:none;border-color:#ffe600;box-shadow:0 0 14px rgba(255,230,0,.55)}
+.hint{margin:-2px 0 6px;font-size:11px;color:#9fb6e8;letter-spacing:.3px}
+input,select,textarea{width:100%;padding:12px;border-radius:12px;border:2px solid #e8eeff;background:linear-gradient(90deg,#040b22,#0a3c9e);color:#fff;font-family:Montserrat,sans-serif;font-size:15px;transition:border-color .25s,box-shadow .25s}
+textarea{resize:vertical;line-height:1.5}
+input:focus,select:focus,textarea:focus{outline:none;border-color:#ffe600;box-shadow:0 0 14px rgba(255,230,0,.55)}
 select option{background:#06245e;color:#fff}
 button{width:100%;margin-top:20px;padding:15px;border:0;border-radius:14px;font-family:Montserrat,sans-serif;font-size:16px;font-weight:700;cursor:pointer;position:relative;overflow:hidden;transition:transform .15s,opacity .2s}
 button:active{transform:scale(.98)}
@@ -88,6 +90,8 @@ const CATEGORIES = [
   "Other"
 ];
 
+const MAX_SERVICES = 20;
+
 const TOAST_SCRIPT = `<script>
 (function(){
   var t = document.getElementById("toast");
@@ -115,6 +119,15 @@ function isHttps(u) {
   return !u || /^https:\/\/\S+$/.test(u);
 }
 
+// Turns the textarea text (one service per line) into a clean array
+function parseServices(raw) {
+  return String(raw ?? "")
+    .split(/\r?\n/)
+    .map((s) => s.trim().slice(0, 120))
+    .filter(Boolean)
+    .slice(0, MAX_SERVICES);
+}
+
 function getCookie(request, name) {
   const header = request.headers.get("Cookie") || "";
   const match = header.match(new RegExp("(?:^|;\\s*)" + name + "=([^;]+)"));
@@ -137,8 +150,9 @@ function renderForm(card, info, notice) {
   const v = (k) => esc(info[k] || "");
   const current = info.category || "Other";
   const options = CATEGORIES
-    .map((c) => `<option value="${c}"${c === current ? " selected" : ""}>${c}</option>`)
+    .map((c) => `<option value="${esc(c)}"${c === current ? " selected" : ""}>${esc(c)}</option>`)
     .join("");
+  const services = Array.isArray(info.services) ? info.services : [];
 
   return `
     <h1>Card ${esc(card)} Settings</h1>
@@ -160,6 +174,9 @@ function renderForm(card, info, notice) {
       <input name="instagram" type="url" value="${v("instagram")}" placeholder="https://instagram.com/yourhandle">
       <label>Facebook Page Link (Optional)</label>
       <input name="facebook" type="url" value="${v("facebook")}" placeholder="https://facebook.com/yourpage">
+      <label>Our Services (Optional)</label>
+      <p class="hint">এক লাইনে একটা করে সার্ভিস লিখুন, সর্বোচ্চ ${MAX_SERVICES}টি।</p>
+      <textarea name="services" rows="6" placeholder="Online form fill-up&#10;Aadhaar services&#10;Passport help">${esc(services.join("\n"))}</textarea>
       <button class="save" name="action" value="save">Save Card Details</button>
     </form>
     <form method="POST" onsubmit="return confirm('Reset this card to available? All details will be removed.')">
@@ -202,6 +219,7 @@ export async function onRequest(context) {
     whatsapp: digitsOnly(body.get("whatsapp")),
     instagram: clean(body.get("instagram"), 300),
     facebook: clean(body.get("facebook"), 300),
+    services: parseServices(body.get("services")),
   };
 
   // Validation errors stay inline, next to the form
