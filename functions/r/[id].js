@@ -28,30 +28,26 @@ body{margin:0;min-height:100vh;padding:28px 18px 20px;display:flex;flex-directio
 .msg{margin:14px 0 0;padding:14px;border-radius:12px;background:rgba(255,230,0,.08);border:1px solid rgba(255,230,0,.45);color:#ffe600;font-size:14px;line-height:1.5}
 .footer{margin-top:22px;font-size:12px;color:#7f93c4;text-align:center;letter-spacing:.3px}
 
-/* Services sheet */
-.overlay{position:fixed;inset:0;background:rgba(2,6,20,.75);display:none;align-items:flex-end;justify-content:center;z-index:50}
+/* Services panel: header and footer fixed, only the list scrolls */
+.overlay{position:fixed;inset:0;background:rgba(2,6,20,.75);display:none;align-items:flex-end;justify-content:center;z-index:50;padding:0}
 .overlay.open{display:flex}
-.sheet{width:100%;max-width:440px;max-height:82vh;display:flex;flex-direction:column;border-radius:24px 24px 0 0;background:linear-gradient(160deg,#050d26 0%,#0a2a6e 55%,#0050c8 100%);border:1px solid rgba(255,255,255,.14);box-shadow:0 -10px 40px rgba(0,0,0,.55);animation:up .4s ease-out}
+.sheet{display:flex;flex-direction:column;width:100%;max-width:440px;height:80vh;background:#071437;border-radius:24px 24px 0 0;border:1px solid rgba(255,255,255,.14);box-shadow:0 -10px 40px rgba(0,0,0,.55);overflow:hidden;animation:up .4s ease-out}
 @keyframes up{from{transform:translateY(60px);opacity:0}to{transform:none;opacity:1}}
-.sheet-head{flex:0 0 auto;padding:20px 22px 16px;text-align:center;border-bottom:1px solid rgba(120,160,255,.25);background:#071437;border-radius:24px 24px 0 0}
+.sheet-head{flex:0 0 auto;padding:18px 22px 14px;text-align:center;border-bottom:1px solid rgba(120,160,255,.25);background:#071437}
 .sheet-head .grip{width:44px;height:5px;border-radius:99px;background:rgba(255,255,255,.25);margin:0 auto 12px}
 .sheet h3{margin:0;font-family:"Playfair Display",serif;font-size:24px;font-weight:800;color:#ffe600}
 .sheet .sub2{margin:6px 0 0;font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:#9fb6e8}
-.svc-list{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:18px 20px 14px}
+.svc-list{flex:1 1 auto;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px 20px;background:#071437}
 .svc-list::-webkit-scrollbar{width:4px}
 .svc-list::-webkit-scrollbar-thumb{background:rgba(255,230,0,.5);border-radius:99px}
-.svc{position:relative;overflow:hidden;display:flex;gap:14px;align-items:center;padding:14px 16px;margin-bottom:12px;border-radius:16px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);text-align:left;font-size:15px;line-height:1.4;box-shadow:0 6px 18px rgba(0,0,0,.25);transition:border-color .3s,box-shadow .3s;animation:svcIn .5s ease-out both}
-.svc::before{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.2),transparent);transform:skewX(-20deg);animation:shine 4.5s ease-in-out infinite;pointer-events:none}
-.svc:hover,.svc:active{border-color:rgba(255,230,0,.5);box-shadow:0 8px 24px rgba(255,230,0,.14)}
+.svc{position:relative;display:flex;gap:14px;align-items:center;padding:14px 16px;margin-bottom:12px;border-radius:16px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);font-size:15px;line-height:1.4;animation:svcIn .5s ease-out both}
+.svc:hover,.svc:active{border-color:rgba(255,230,0,.5)}
 @keyframes svcIn{from{opacity:0;transform:translateX(-18px)}to{opacity:1;transform:none}}
-.svc b{position:relative;flex-shrink:0;width:30px;height:30px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#fff6a8,#ffe600 55%,#d4a80c);color:#111;display:flex;align-items:center;justify-content:center;font-size:13px;box-shadow:0 0 12px rgba(255,230,0,.5);animation:pop 2.4s ease-in-out infinite}
-.svc b::after{content:"";position:absolute;inset:-5px;border-radius:50%;border:2px solid rgba(255,230,0,.55);animation:ring 2.4s ease-out infinite;pointer-events:none}
-@keyframes ring{0%{transform:scale(.8);opacity:.9}100%{transform:scale(1.6);opacity:0}}
+.svc b{flex-shrink:0;width:30px;height:30px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#fff6a8,#ffe600 55%,#d4a80c);color:#111;display:flex;align-items:center;justify-content:center;font-size:13px;box-shadow:0 0 12px rgba(255,230,0,.5);animation:pop 2.4s ease-in-out infinite}
 @keyframes pop{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
-.svc span{position:relative;color:#f1f5ff}
-.sheet-foot{flex:0 0 auto;padding:12px 20px 20px;border-top:1px solid rgba(120,160,255,.2);background:#071437;border-radius:0 0 0 0}
-.close{position:relative;overflow:hidden;width:100%;margin-top:0;padding:14px;border:0;border-radius:14px;background:linear-gradient(90deg,#d4a80c,#f5c518);color:#111;font-weight:700;font-size:15px;cursor:pointer;font-family:Montserrat,sans-serif;animation:glow 2.8s ease-in-out infinite;--glow:rgba(245,197,24,.7)}
-.close::after{content:"";position:absolute;top:0;left:-75%;width:50%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.5),transparent);transform:skewX(-20deg);animation:shine 3.5s ease-in-out infinite;pointer-events:none}
+.svc span{color:#f1f5ff}
+.sheet-foot{flex:0 0 auto;padding:12px 20px 20px;border-top:1px solid rgba(120,160,255,.2);background:#071437}
+.close{width:100%;padding:14px;border:0;border-radius:14px;background:linear-gradient(90deg,#d4a80c,#f5c518);color:#111;font-weight:700;font-size:15px;cursor:pointer;font-family:Montserrat,sans-serif;animation:glow 2.8s ease-in-out infinite;--glow:rgba(245,197,24,.7)}
 @media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
 `;
 
@@ -136,7 +132,6 @@ export async function onRequest(context) {
     ${sub ? `<p class="sub">${sub}</p>` : ""}
     ${buttons.length ? buttons.join("") : `<p class="msg">No links added yet.</p>`}`;
 
-  // Heading and footer stay fixed; only the list scrolls
   const svcPanel = services.length ? `
     <div class="overlay" id="svcOverlay">
       <div class="sheet">
@@ -167,8 +162,12 @@ export async function onRequest(context) {
 
   var o = document.getElementById("svcOverlay");
   var ob = document.getElementById("svcOpen");
+  var list = document.getElementById("svcList");
   if (ob && o) {
-    ob.addEventListener("click", function(){ o.classList.add("open"); });
+    ob.addEventListener("click", function(){
+      o.classList.add("open");
+      if (list) list.scrollTop = 0;
+    });
     document.getElementById("svcClose").addEventListener("click", function(){ o.classList.remove("open"); });
     o.addEventListener("click", function(e){ if (e.target === o) o.classList.remove("open"); });
   }
