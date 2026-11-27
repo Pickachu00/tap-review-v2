@@ -28,8 +28,8 @@ body{margin:0;min-height:100vh;padding:28px 18px 20px;display:flex;flex-directio
 .msg{margin:14px 0 0;padding:14px;border-radius:12px;background:rgba(255,230,0,.08);border:1px solid rgba(255,230,0,.45);color:#ffe600;font-size:14px;line-height:1.5}
 .footer{margin-top:22px;font-size:12px;color:#7f93c4;text-align:center;letter-spacing:.3px}
 
-/* Services panel: header and footer fixed, only the list scrolls */
-.overlay{position:fixed;inset:0;background:rgba(2,6,20,.75);display:none;align-items:flex-end;justify-content:center;z-index:50;padding:0}
+/* Services panel: fixed to the screen, header and footer stay put, only the list scrolls */
+.overlay{position:fixed;inset:0;background:rgba(2,6,20,.75);display:none;align-items:flex-end;justify-content:center;z-index:50}
 .overlay.open{display:flex}
 .sheet{display:flex;flex-direction:column;width:100%;max-width:440px;height:80vh;background:#071437;border-radius:24px 24px 0 0;border:1px solid rgba(255,255,255,.14);box-shadow:0 -10px 40px rgba(0,0,0,.55);overflow:hidden;animation:up .4s ease-out}
 @keyframes up{from{transform:translateY(60px);opacity:0}to{transform:none;opacity:1}}
@@ -65,9 +65,10 @@ function esc(s) {
   }[c]));
 }
 
-function page(body, script = "") {
+// extra = HTML placed OUTSIDE the card (so fixed overlays aren't trapped by its transform)
+function page(body, script = "", extra = "") {
   return new Response(
-    `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Review Us</title><link rel="icon" type="image/png" href="/favicon.png"><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet"><style>${CSS}</style></head><body><div class="stars"><span class="star-on">★</span><span class="star-on">★</span><span class="star-on">★</span><span class="star-off">★</span><span class="star-off">★</span></div><div class="card">${body}</div><p class="footer">© 2026 Debajyoti Shaw. All rights reserved.</p>${script}</body></html>`,
+    `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Review Us</title><link rel="icon" type="image/png" href="/favicon.png"><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet"><style>${CSS}</style></head><body><div class="stars"><span class="star-on">★</span><span class="star-on">★</span><span class="star-on">★</span><span class="star-off">★</span><span class="star-off">★</span></div><div class="card">${body}</div>${extra}<p class="footer">© 2026 Debajyoti Shaw. All rights reserved.</p>${script}</body></html>`,
     { headers: { "content-type": "text/html; charset=utf-8" } }
   );
 }
@@ -174,5 +175,5 @@ export async function onRequest(context) {
 })();
 </script>`;
 
-  return page(body + svcPanel, script);
+  return page(body, script, svcPanel);
 }
