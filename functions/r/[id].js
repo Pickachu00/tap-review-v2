@@ -29,34 +29,30 @@ body{margin:0;min-height:100vh;padding:28px 18px 20px;display:flex;flex-directio
 .footer{margin-top:22px;font-size:12px;color:#7f93c4;text-align:center;letter-spacing:.3px}
 
 /* Services sheet */
-.overlay{position:fixed;inset:0;background:rgba(2,6,20,.72);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);display:none;align-items:flex-end;justify-content:center;z-index:50}
-.overlay.open{display:flex;animation:fadeIn .3s ease-out}
-@keyframes fadeIn{from{opacity:0}to{opacity:1}}
-.sheet{position:relative;width:100%;max-width:440px;height:82vh;display:flex;flex-direction:column;border-radius:24px 24px 0 0;background:linear-gradient(160deg,#050d26 0%,#0a2a6e 55%,#0050c8 100%);background-size:200% 200%;border:1px solid rgba(255,255,255,.14);box-shadow:0 -10px 40px rgba(0,0,0,.55);animation:up .4s cubic-bezier(.2,.8,.2,1),bgShift 10s ease-in-out infinite;overflow:hidden}
+.overlay{position:fixed;inset:0;background:rgba(2,6,20,.75);display:none;align-items:flex-end;justify-content:center;z-index:50}
+.overlay.open{display:flex}
+.sheet{width:100%;max-width:440px;max-height:82vh;display:flex;flex-direction:column;border-radius:24px 24px 0 0;background:linear-gradient(160deg,#050d26 0%,#0a2a6e 55%,#0050c8 100%);border:1px solid rgba(255,255,255,.14);box-shadow:0 -10px 40px rgba(0,0,0,.55);animation:up .4s ease-out}
 @keyframes up{from{transform:translateY(60px);opacity:0}to{transform:none;opacity:1}}
-@keyframes bgShift{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
-.sheet-head{flex-shrink:0;padding:22px 22px 16px;text-align:center;border-bottom:1px solid rgba(120,160,255,.25);background:linear-gradient(180deg,rgba(5,13,38,.98),rgba(5,13,38,.85));position:relative}
-.sheet-head::after{content:"";position:absolute;left:20%;right:20%;bottom:-1px;height:2px;background:linear-gradient(90deg,transparent,#ffe600,transparent);background-size:200% 100%;animation:headGlow 3s linear infinite}
-@keyframes headGlow{to{background-position:200% 0}}
+.sheet-head{flex:0 0 auto;padding:20px 22px 16px;text-align:center;border-bottom:1px solid rgba(120,160,255,.25);background:#071437;border-radius:24px 24px 0 0}
 .sheet-head .grip{width:44px;height:5px;border-radius:99px;background:rgba(255,255,255,.25);margin:0 auto 12px}
-.sheet h3{margin:0;font-family:"Playfair Display",serif;font-size:24px;font-weight:800;color:transparent;background:linear-gradient(90deg,#ffffff 0%,#ffe600 45%,#ffffff 70%);background-size:200% auto;-webkit-background-clip:text;background-clip:text;animation:textShine 4s linear infinite}
+.sheet h3{margin:0;font-family:"Playfair Display",serif;font-size:24px;font-weight:800;color:#ffe600}
 .sheet .sub2{margin:6px 0 0;font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:#9fb6e8}
-.svc-list{flex:1;overflow-y:auto;overscroll-behavior:contain;padding:18px 20px 28px;-webkit-overflow-scrolling:touch;scroll-behavior:smooth;-webkit-mask-image:linear-gradient(#000 88%,transparent);mask-image:linear-gradient(#000 88%,transparent)}
+.svc-list{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:18px 20px 14px}
 .svc-list::-webkit-scrollbar{width:4px}
 .svc-list::-webkit-scrollbar-thumb{background:rgba(255,230,0,.5);border-radius:99px}
-.svc{position:relative;overflow:hidden;display:flex;gap:14px;align-items:center;padding:14px 16px;margin-bottom:12px;border-radius:16px;background:linear-gradient(120deg,rgba(255,255,255,.07),rgba(255,255,255,.03));border:1px solid rgba(255,255,255,.12);text-align:left;font-size:15px;line-height:1.4;box-shadow:0 6px 18px rgba(0,0,0,.25);transition:border-color .3s,box-shadow .3s;opacity:0;transform:translateX(-18px);animation:svcIn .5s ease-out forwards}
+.svc{position:relative;overflow:hidden;display:flex;gap:14px;align-items:center;padding:14px 16px;margin-bottom:12px;border-radius:16px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);text-align:left;font-size:15px;line-height:1.4;box-shadow:0 6px 18px rgba(0,0,0,.25);transition:border-color .3s,box-shadow .3s;animation:svcIn .5s ease-out both}
 .svc::before{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.2),transparent);transform:skewX(-20deg);animation:shine 4.5s ease-in-out infinite;pointer-events:none}
 .svc:hover,.svc:active{border-color:rgba(255,230,0,.5);box-shadow:0 8px 24px rgba(255,230,0,.14)}
-@keyframes svcIn{to{opacity:1;transform:none}}
+@keyframes svcIn{from{opacity:0;transform:translateX(-18px)}to{opacity:1;transform:none}}
 .svc b{position:relative;flex-shrink:0;width:30px;height:30px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#fff6a8,#ffe600 55%,#d4a80c);color:#111;display:flex;align-items:center;justify-content:center;font-size:13px;box-shadow:0 0 12px rgba(255,230,0,.5);animation:pop 2.4s ease-in-out infinite}
 .svc b::after{content:"";position:absolute;inset:-5px;border-radius:50%;border:2px solid rgba(255,230,0,.55);animation:ring 2.4s ease-out infinite;pointer-events:none}
 @keyframes ring{0%{transform:scale(.8);opacity:.9}100%{transform:scale(1.6);opacity:0}}
 @keyframes pop{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
 .svc span{position:relative;color:#f1f5ff}
-.sheet-foot{flex-shrink:0;padding:12px 20px 20px;border-top:1px solid rgba(120,160,255,.2);background:rgba(5,13,38,.95)}
+.sheet-foot{flex:0 0 auto;padding:12px 20px 20px;border-top:1px solid rgba(120,160,255,.2);background:#071437;border-radius:0 0 0 0}
 .close{position:relative;overflow:hidden;width:100%;margin-top:0;padding:14px;border:0;border-radius:14px;background:linear-gradient(90deg,#d4a80c,#f5c518);color:#111;font-weight:700;font-size:15px;cursor:pointer;font-family:Montserrat,sans-serif;animation:glow 2.8s ease-in-out infinite;--glow:rgba(245,197,24,.7)}
 .close::after{content:"";position:absolute;top:0;left:-75%;width:50%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.5),transparent);transform:skewX(-20deg);animation:shine 3.5s ease-in-out infinite;pointer-events:none}
-@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}.svc{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
 `;
 
 const ICON = {
@@ -171,12 +167,8 @@ export async function onRequest(context) {
 
   var o = document.getElementById("svcOverlay");
   var ob = document.getElementById("svcOpen");
-  var list = document.getElementById("svcList");
   if (ob && o) {
-    ob.addEventListener("click", function(){
-      o.classList.add("open");
-      if (list) list.scrollTop = 0;
-    });
+    ob.addEventListener("click", function(){ o.classList.add("open"); });
     document.getElementById("svcClose").addEventListener("click", function(){ o.classList.remove("open"); });
     o.addEventListener("click", function(e){ if (e.target === o) o.classList.remove("open"); });
   }
