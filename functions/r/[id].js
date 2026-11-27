@@ -14,7 +14,7 @@ body{margin:0;min-height:100vh;padding:28px 18px 20px;display:flex;flex-directio
 .shop{margin:0;font-family:"Playfair Display",serif;font-size:30px;font-weight:800;line-height:1.2;letter-spacing:.3px;cursor:pointer;user-select:none;-webkit-user-select:none;color:transparent;background:linear-gradient(90deg,#ffffff 0%,#ffe600 40%,#ffffff 60%);background-size:200% auto;-webkit-background-clip:text;background-clip:text;animation:textShine 5s linear infinite}
 @keyframes textShine{to{background-position:200% center}}
 .sub{margin:12px 0 0;font-size:12px;font-weight:500;letter-spacing:2.5px;text-transform:uppercase;color:#9fb6e8}
-.btn{position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;gap:12px;width:100%;padding:16px;margin-top:14px;border-radius:14px;font-family:Montserrat,sans-serif;font-weight:600;font-size:16px;text-decoration:none;color:#fff;animation:glow 2.8s ease-in-out infinite;transition:transform .2s}
+.btn{position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;gap:12px;width:100%;padding:16px;margin-top:14px;border-radius:14px;font-family:Montserrat,sans-serif;font-weight:600;font-size:16px;text-decoration:none;color:#fff;border:0;cursor:pointer;animation:glow 2.8s ease-in-out infinite;transition:transform .2s}
 .btn:hover{transform:translateY(-2px)}
 .btn::after{content:"";position:absolute;top:0;left:-75%;width:50%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.45),transparent);transform:skewX(-20deg);animation:shine 3.5s ease-in-out infinite;pointer-events:none}
 @keyframes shine{0%{left:-75%}60%,100%{left:125%}}
@@ -23,9 +23,19 @@ body{margin:0;min-height:100vh;padding:28px 18px 20px;display:flex;flex-directio
 .green{background:#25d366;--glow:rgba(37,211,102,.75)}
 .insta{background:linear-gradient(90deg,#f58529,#dd2a7b,#8134af);--glow:rgba(221,42,123,.75)}
 .fb{background:#1877f2;--glow:rgba(24,119,242,.75)}
+.svc-btn{background:linear-gradient(90deg,#1e3a8a,#3b82f6);color:#fff;--glow:rgba(59,130,246,.75)}
 @keyframes glow{0%,100%{box-shadow:0 0 6px var(--glow)}50%{box-shadow:0 0 20px var(--glow)}}
 .msg{margin:14px 0 0;padding:14px;border-radius:12px;background:rgba(255,230,0,.08);border:1px solid rgba(255,230,0,.45);color:#ffe600;font-size:14px;line-height:1.5}
 .footer{margin-top:22px;font-size:12px;color:#7f93c4;text-align:center;letter-spacing:.3px}
+.overlay{position:fixed;inset:0;background:rgba(2,6,20,.7);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);display:none;align-items:flex-end;justify-content:center;z-index:50}
+.overlay.open{display:flex}
+.sheet{width:100%;max-width:440px;max-height:80vh;overflow-y:auto;margin:0 auto;padding:24px 22px 28px;border-radius:24px 24px 0 0;background:linear-gradient(160deg,#050d26 0%,#0a2a6e 55%,#0050c8 100%);border:1px solid rgba(255,255,255,.12);box-shadow:0 -10px 40px rgba(0,0,0,.5);animation:up .35s ease-out}
+@keyframes up{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+.sheet h3{margin:0 0 6px;font-family:"Playfair Display",serif;font-size:22px;color:#ffe600}
+.sheet .sub2{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#9fb6e8;margin:0 0 16px}
+.svc{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;margin-bottom:10px;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);text-align:left;font-size:15px;line-height:1.4}
+.svc b{flex-shrink:0;width:26px;height:26px;border-radius:50%;background:#ffe600;color:#111;display:flex;align-items:center;justify-content:center;font-size:13px}
+.close{margin-top:14px;width:100%;padding:13px;border:0;border-radius:14px;background:rgba(255,255,255,.08);color:#fff;font-weight:600;cursor:pointer;font-family:Montserrat,sans-serif}
 @media (prefers-reduced-motion: reduce){*{animation:none!important}}
 `;
 
@@ -34,6 +44,7 @@ const ICON = {
   wa: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21l1.6-4.6A9 9 0 1 1 8 19.6L3 21z"/><path d="M9 10c0 2.5 2.5 5 5 5l1-1.5-1.8-.9-.7.7c-.8-.4-1.6-1.2-2-2l.7-.7-.9-1.8L9 10z" fill="currentColor" stroke="none"/></svg>`,
   ig: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"/></svg>`,
   fb: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 8h3V4h-3c-2.8 0-4.5 1.8-4.5 4.6V11H7v4h2.5v7h4v-7h3l.5-4h-3.5V9c0-.6.4-1 1-1z"/></svg>`,
+  svc: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg>`,
 };
 
 function esc(s) {
@@ -97,12 +108,27 @@ export async function onRequest(context) {
     buttons.push(`<a class="btn fb" href="${esc(info.facebook)}" target="_blank" rel="noopener">${ICON.fb}Like on Facebook</a>`);
   }
 
+  const services = Array.isArray(info.services) ? info.services : [];
+  if (services.length) {
+    buttons.push(`<button class="btn svc-btn" type="button" id="svcOpen">${ICON.svc}Our Services</button>`);
+  }
+
   const sub = [info.category, info.area].filter(Boolean).map(esc).join(" · ");
 
   const body = `
     <h2 class="shop" id="shop">${esc(info.name)}</h2>
     ${sub ? `<p class="sub">${sub}</p>` : ""}
     ${buttons.length ? buttons.join("") : `<p class="msg">No links added yet.</p>`}`;
+
+  const svcPanel = services.length ? `
+    <div class="overlay" id="svcOverlay">
+      <div class="sheet">
+        <h3>Our Services</h3>
+        <p class="sub2">${esc(info.name)}</p>
+        ${services.map((s, i) => `<div class="svc"><b>${i + 1}</b><span>${esc(s)}</span></div>`).join("")}
+        <button class="close" type="button" id="svcClose">Close</button>
+      </div>
+    </div>` : "";
 
   const script = `<script>
 (function(){
@@ -114,8 +140,16 @@ export async function onRequest(context) {
     taps.push(now);
     if (taps.length >= 3) { window.location.href = "/login?card=${id}"; }
   });
+
+  var o = document.getElementById("svcOverlay");
+  var ob = document.getElementById("svcOpen");
+  if (ob && o) {
+    ob.addEventListener("click", function(){ o.classList.add("open"); });
+    document.getElementById("svcClose").addEventListener("click", function(){ o.classList.remove("open"); });
+    o.addEventListener("click", function(e){ if (e.target === o) o.classList.remove("open"); });
+  }
 })();
 </script>`;
 
-  return page(body, script);
+  return page(body + svcPanel, script);
 }
