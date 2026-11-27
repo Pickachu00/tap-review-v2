@@ -14,21 +14,23 @@ body{margin:0;min-height:100vh;padding:28px 18px 20px;display:flex;flex-directio
 .shop{margin:0;font-family:"Playfair Display",serif;font-size:30px;font-weight:800;line-height:1.2;letter-spacing:.3px;cursor:pointer;user-select:none;-webkit-user-select:none;color:transparent;background:linear-gradient(90deg,#ffffff 0%,#ffe600 40%,#ffffff 60%);background-size:200% auto;-webkit-background-clip:text;background-clip:text;animation:textShine 5s linear infinite}
 @keyframes textShine{to{background-position:200% center}}
 .sub{margin:12px 0 0;font-size:12px;font-weight:500;letter-spacing:2.5px;text-transform:uppercase;color:#9fb6e8}
-.btn{position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;gap:12px;width:100%;padding:16px;margin-top:14px;border-radius:14px;font-family:Montserrat,sans-serif;font-weight:600;font-size:16px;text-decoration:none;color:#fff;border:0;cursor:pointer;animation:glow 2.8s ease-in-out infinite;transition:transform .2s}
+.btn{position:relative;overflow:hidden;display:flex;align-items:center;justify-content:flex-start;gap:14px;width:100%;padding:14px 18px;margin-top:12px;border-radius:14px;font-family:Montserrat,sans-serif;font-weight:600;font-size:15px;text-decoration:none;color:#fff;border:0;cursor:pointer;animation:glow 2.8s ease-in-out infinite;transition:transform .2s}
 .btn:hover{transform:translateY(-2px)}
 .btn::after{content:"";position:absolute;top:0;left:-75%;width:50%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.45),transparent);transform:skewX(-20deg);animation:shine 3.5s ease-in-out infinite;pointer-events:none}
 @keyframes shine{0%{left:-75%}60%,100%{left:125%}}
-.btn svg{width:22px;height:22px;flex-shrink:0}
+.ico{flex-shrink:0;width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.95);display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,.2)}
+.ico svg{width:16px;height:16px}
 .gold{background:linear-gradient(90deg,#d4a80c,#f5c518);color:#111;--glow:rgba(245,197,24,.75)}
 .green{background:#25d366;--glow:rgba(37,211,102,.75)}
 .insta{background:linear-gradient(90deg,#f58529,#dd2a7b,#8134af);--glow:rgba(221,42,123,.75)}
 .fb{background:#1877f2;--glow:rgba(24,119,242,.75)}
 .svc-btn{background:linear-gradient(90deg,#1e3a8a,#3b82f6);color:#fff;--glow:rgba(59,130,246,.75)}
+.btn-label{flex:1;text-align:center;padding-right:30px}
 @keyframes glow{0%,100%{box-shadow:0 0 6px var(--glow)}50%{box-shadow:0 0 20px var(--glow)}}
 .msg{margin:14px 0 0;padding:14px;border-radius:12px;background:rgba(255,230,0,.08);border:1px solid rgba(255,230,0,.45);color:#ffe600;font-size:14px;line-height:1.5}
 .footer{margin-top:22px;font-size:12px;color:#7f93c4;text-align:center;letter-spacing:.3px}
 
-/* Services panel: fixed to the screen, header and footer stay put, only the list scrolls */
+/* Services panel */
 .overlay{position:fixed;inset:0;background:rgba(2,6,20,.75);display:none;align-items:flex-end;justify-content:center;z-index:50;transition:background .3s}
 .overlay.open{display:flex;animation:fadeIn .3s ease-out}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
@@ -56,12 +58,13 @@ body{margin:0;min-height:100vh;padding:28px 18px 20px;display:flex;flex-directio
 @media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
 `;
 
+// Small, same-size icons. Each sits inside a white badge so all brands look uniform.
 const ICON = {
-  maps: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z"/></svg>`,
-  wa: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21l1.6-4.6A9 9 0 1 1 8 19.6L3 21z"/><path d="M9 10c0 2.5 2.5 5 5 5l1-1.5-1.8-.9-.7.7c-.8-.4-1.6-1.2-2-2l.7-.7-.9-1.8L9 10z" fill="currentColor" stroke="none"/></svg>`,
-  ig: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"/></svg>`,
-  fb: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 8h3V4h-3c-2.8 0-4.5 1.8-4.5 4.6V11H7v4h2.5v7h4v-7h3l.5-4h-3.5V9c0-.6.4-1 1-1z"/></svg>`,
-  svc: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg>`,
+  maps: `<svg viewBox="0 0 24 24" fill="#d4a80c"><path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z"/></svg>`,
+  wa: `<svg viewBox="0 0 24 24" fill="#25d366"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.6.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.3.1-.2 0-.3 0-.5l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c2.2.9 2.6.7 3.1.7a2.6 2.6 0 0 0 1.7-1.2 2.1 2.1 0 0 0 .1-1.2c-.1-.1-.2-.2-.4-.3z"/></svg>`,
+  ig: `<svg viewBox="0 0 24 24" fill="none" stroke="#dd2a7b" stroke-width="2.2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.2" fill="#dd2a7b" stroke="none"/></svg>`,
+  fb: `<svg viewBox="0 0 24 24" fill="#1877f2"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.3v7A10 10 0 0 0 22 12z"/></svg>`,
+  svc: `<svg viewBox="0 0 24 24" fill="none" stroke="#1e3a8a" stroke-width="2.4" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg>`,
 };
 
 function esc(s) {
@@ -91,6 +94,11 @@ async function logScan(env, card, request) {
   }
 }
 
+// One button: icon badge on the left, label centred
+function btn(cls, href, icon, label, extraAttrs = "") {
+  return `<a class="btn ${cls}" href="${href}" target="_blank" rel="noopener" ${extraAttrs}><span class="ico">${icon}</span><span class="btn-label">${label}</span></a>`;
+}
+
 export async function onRequest(context) {
   const { env, request } = context;
   const id = String(context.params.id || "").replace(/\D/g, "").slice(0, 6);
@@ -113,22 +121,22 @@ export async function onRequest(context) {
 
   const buttons = [];
   if (info.google) {
-    buttons.push(`<a class="btn gold" href="${esc(info.google)}" target="_blank" rel="noopener">${ICON.maps}Leave a Google Review</a>`);
+    buttons.push(btn("gold", esc(info.google), ICON.maps, "Leave a Google Review"));
   }
   if (info.whatsapp) {
     const num = info.whatsapp.length === 10 ? "91" + info.whatsapp : info.whatsapp;
-    buttons.push(`<a class="btn green" href="https://wa.me/${esc(num)}" target="_blank" rel="noopener">${ICON.wa}Connect on WhatsApp</a>`);
+    buttons.push(btn("green", `https://wa.me/${esc(num)}`, ICON.wa, "Connect on WhatsApp"));
   }
   if (info.instagram) {
-    buttons.push(`<a class="btn insta" href="${esc(info.instagram)}" target="_blank" rel="noopener">${ICON.ig}Follow on Instagram</a>`);
+    buttons.push(btn("insta", esc(info.instagram), ICON.ig, "Follow on Instagram"));
   }
   if (info.facebook) {
-    buttons.push(`<a class="btn fb" href="${esc(info.facebook)}" target="_blank" rel="noopener">${ICON.fb}Like on Facebook</a>`);
+    buttons.push(btn("fb", esc(info.facebook), ICON.fb, "Like on Facebook"));
   }
 
   const services = Array.isArray(info.services) ? info.services : [];
   if (services.length) {
-    buttons.push(`<button class="btn svc-btn" type="button" id="svcOpen">${ICON.svc}Our Services</button>`);
+    buttons.push(`<button class="btn svc-btn" type="button" id="svcOpen"><span class="ico">${ICON.svc}</span><span class="btn-label">Our Services</span></button>`);
   }
 
   const sub = [info.category, info.area].filter(Boolean).map(esc).join(" · ");
