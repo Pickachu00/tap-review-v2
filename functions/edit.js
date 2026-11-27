@@ -19,10 +19,17 @@ h1{margin:0 0 18px;text-align:center;font-family:"Playfair Display",serif;font-s
 .msg{margin:0 0 6px;padding:14px;border-radius:12px;background:rgba(255,230,0,.08);border:1px solid rgba(255,230,0,.45);color:#ffe600;font-size:14px;line-height:1.5}
 label{display:block;margin:14px 0 6px;font-size:13px;font-weight:500;color:#c3d3f5}
 .hint{margin:-2px 0 6px;font-size:11px;color:#9fb6e8;letter-spacing:.3px}
-input,select,textarea{width:100%;padding:12px;border-radius:12px;border:2px solid #e8eeff;background:linear-gradient(90deg,#040b22,#0a3c9e);color:#fff;font-family:Montserrat,sans-serif;font-size:15px;transition:border-color .25s,box-shadow .25s}
+input,select,textarea{width:100%;padding:12px;border-radius:12px;border:2px solid #e8eeff;background:linear-gradient(90deg,#040b22,#0a3c9e);color:#fff;font-family:Montserrat,sans-serif;font-size:15px;color-scheme:dark;transition:border-color .25s,box-shadow .25s}
 textarea{resize:vertical;line-height:1.5}
 input:focus,select:focus,textarea:focus{outline:none;border-color:#ffe600;box-shadow:0 0 14px rgba(255,230,0,.55)}
 select option{background:#06245e;color:#fff}
+.hrs{display:flex;flex-direction:column;gap:8px;margin-top:6px}
+.hr{display:grid;grid-template-columns:44px 1fr 1fr;gap:6px;align-items:center}
+.hr .day{font-size:13px;font-weight:600;color:#ffe600}
+.hr input[type=time]{padding:9px 8px;font-size:14px}
+.hr.closed input[type=time]{opacity:.35}
+.hr .cl{grid-column:1/-1;font-size:12px;color:#c3d3f5;display:flex;align-items:center;gap:6px}
+.hr .cl input{width:auto;margin:0}
 button{width:100%;margin-top:20px;padding:15px;border:0;border-radius:14px;font-family:Montserrat,sans-serif;font-size:16px;font-weight:700;cursor:pointer;position:relative;overflow:hidden;transition:transform .15s,opacity .2s}
 button:active{transform:scale(.98)}
 button:disabled{opacity:.7;cursor:wait}
@@ -90,6 +97,11 @@ const CATEGORIES = [
   "Other"
 ];
 
+const DAYS = [
+  ["mon", "Mon"], ["tue", "Tue"], ["wed", "Wed"], ["thu", "Thu"],
+  ["fri", "Fri"], ["sat", "Sat"], ["sun", "Sun"],
+];
+
 const MAX_SERVICES = 20;
 
 const TOAST_SCRIPT = `<script>
@@ -128,6 +140,19 @@ function parseServices(raw) {
     .slice(0, MAX_SERVICES);
 }
 
+// Reads the 7 day rows. A day is null (closed) unless both times are given and it is not ticked "Closed".
+function parseHours(body) {
+  const out = {};
+  for (const [key] of DAYS) {
+    const o = String(body.get(`h_${key}_o`) || "").trim();
+    const c = String(body.get(`h_${key}_c`) || "").trim();
+    const closed = body.get(`h_${key}_closed`) === "on";
+    const valid = /^\d{2}:\d{2}$/.test(o) && /^\d{2}:\d{2}$/.test(c);
+    out[key] = !closed && valid ? { o, c } : null;
+  }
+  return out;
+}
+
 function getCookie(request, name) {
   const header = request.headers.get("Cookie") || "";
   const match = header.match(new RegExp("(?:^|;\\s*)" + name + "=([^;]+)"));
@@ -144,6 +169,20 @@ function page(body, opts = {}) {
     `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Card Settings</title><link rel="icon" type="image/png" href="/favicon.png"><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet"><style>${CSS}</style></head><body class="${bodyClass}"><div class="stars"><span class="star-on">★</span><span class="star-on">★</span><span class="star-on">★</span><span class="star-off">★</span><span class="star-off">★</span></div><div class="card">${body}</div><p class="footer">© 2026 Debajyoti Shaw. All rights reserved.</p>${toast}${script}</body></html>`,
     { headers: { "content-type": "text/html; charset=utf-8" } }
   );
+}
+
+function renderHours(hours) {
+  const rows = DAYS.map(([key, label]) => {
+    const h = hours && hours[key];
+    const closed = !h;
+    return `<div class="hr${closed ? " closed" : ""}" id="row_${key}">
+      <span class="day">${label}</span>
+      <input type="time" name="h_${key}_o" value="${esc(h ? h.o : "")}" aria-label="${label} opens">
+      <input type="time" name="h_${key}_c" value="${esc(h ? h.c : "")}" aria-label="${label} closes">
+      <label class="cl"><input type="checkbox" name="h_${key}_closed"${closed ? " checked" : ""}> Closed on ${label}</label>
+    </div>`;
+  }).join("");
+  return `<div class="hrs">${rows}</div>`;
 }
 
 function renderForm(card, info, notice) {
@@ -174,6 +213,12 @@ function renderForm(card, info, notice) {
       <input name="instagram" type="url" value="${v("instagram")}" placeholder="https://instagram.com/yourhandle">
       <label>Facebook Page Link (Optional)</label>
       <input name="facebook" type="url" value="${v("facebook")}" placeholder="https://facebook.com/yourpage">
+      <label>Menu Link (Optional)</label>
+      <p class="hint">মেনুর ছবি বা PDF-এর https লিংক দিন।</p>
+      <input name="menu" type="url" value="${v("menu")}" placeholder="https://...">
+      <label>Opening Hours (Optional)</label>
+      <p class="hint">প্রতিদিনের খোলার ও বন্ধের সময় দিন। বন্ধ থাকলে "Closed" টিক দিন।</p>
+      ${renderHours(info.hours)}
       <label>Our Services (Optional)</label>
       <p class="hint">এক লাইনে একটা করে সার্ভিস লিখুন, সর্বোচ্চ ${MAX_SERVICES}টি।</p>
       <textarea name="services" rows="6" placeholder="Online form fill-up&#10;Aadhaar services&#10;Passport help">${esc(services.join("\n"))}</textarea>
@@ -219,6 +264,8 @@ export async function onRequest(context) {
     whatsapp: digitsOnly(body.get("whatsapp")),
     instagram: clean(body.get("instagram"), 300),
     facebook: clean(body.get("facebook"), 300),
+    menu: clean(body.get("menu"), 500),
+    hours: parseHours(body),
     services: parseServices(body.get("services")),
   };
 
@@ -227,6 +274,7 @@ export async function onRequest(context) {
   if (!isHttps(data.google)) return page(renderForm(card, data, "Google link must start with https://"), { intro: false });
   if (!isHttps(data.instagram)) return page(renderForm(card, data, "Instagram link must start with https://"), { intro: false });
   if (!isHttps(data.facebook)) return page(renderForm(card, data, "Facebook link must start with https://"), { intro: false });
+  if (!isHttps(data.menu)) return page(renderForm(card, data, "Menu link must start with https://"), { intro: false });
   if (data.whatsapp && data.whatsapp.length < 10) {
     return page(renderForm(card, data, "WhatsApp number must be at least 10 digits."), { intro: false });
   }
