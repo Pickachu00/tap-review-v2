@@ -184,26 +184,4 @@ export async function onRequest(context) {
 </script>`;
 
   return page(body + svcPanel, script);
-} const script = `<script>
-(function(){
-  var el = document.getElementById("shop");
-  var taps = [];
-  el.addEventListener("click", function(){
-    var now = Date.now();
-    taps = taps.filter(function(t){ return now - t < 1000; });
-    taps.push(now);
-    if (taps.length >= 3) { window.location.href = "/login?card=${id}"; }
-  });
-
-  var o = document.getElementById("svcOverlay");
-  var ob = document.getElementById("svcOpen");
-  if (ob && o) {
-    ob.addEventListener("click", function(){ o.classList.add("open"); });
-    document.getElementById("svcClose").addEventListener("click", function(){ o.classList.remove("open"); });
-    o.addEventListener("click", function(e){ if (e.target === o) o.classList.remove("open"); });
-  }
-})();
-</script>`;
-
-  return page(body + svcPanel, script);
 }
