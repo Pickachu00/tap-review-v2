@@ -29,25 +29,30 @@ body{margin:0;min-height:100vh;padding:28px 18px 20px;display:flex;flex-directio
 .footer{margin-top:22px;font-size:12px;color:#7f93c4;text-align:center;letter-spacing:.3px}
 
 /* Services panel: fixed to the screen, header and footer stay put, only the list scrolls */
-.overlay{position:fixed;inset:0;background:rgba(2,6,20,.75);display:none;align-items:flex-end;justify-content:center;z-index:50}
-.overlay.open{display:flex}
-.sheet{display:flex;flex-direction:column;width:100%;max-width:440px;height:80vh;background:#071437;border-radius:24px 24px 0 0;border:1px solid rgba(255,255,255,.14);box-shadow:0 -10px 40px rgba(0,0,0,.55);overflow:hidden;animation:up .4s ease-out}
-@keyframes up{from{transform:translateY(60px);opacity:0}to{transform:none;opacity:1}}
-.sheet-head{flex:0 0 auto;padding:18px 22px 14px;text-align:center;border-bottom:1px solid rgba(120,160,255,.25);background:#071437}
+.overlay{position:fixed;inset:0;background:rgba(2,6,20,.75);display:none;align-items:flex-end;justify-content:center;z-index:50;transition:background .3s}
+.overlay.open{display:flex;animation:fadeIn .3s ease-out}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.sheet{display:flex;flex-direction:column;width:100%;max-width:440px;height:80vh;background:#071437;border-radius:24px 24px 0 0;border:1px solid rgba(255,230,0,.2);box-shadow:0 -10px 50px rgba(0,0,0,.6),0 0 30px rgba(255,230,0,.08);overflow:hidden;animation:up .45s cubic-bezier(.2,.8,.2,1)}
+@keyframes up{from{transform:translateY(80px);opacity:0}to{transform:none;opacity:1}}
+.sheet-head{flex:0 0 auto;padding:18px 22px 14px;text-align:center;border-bottom:1px solid rgba(120,160,255,.25);background:#071437;position:relative}
+.sheet-head::after{content:"";position:absolute;left:15%;right:15%;bottom:-1px;height:2px;background:linear-gradient(90deg,transparent,#ffe600,transparent);background-size:200% 100%;animation:headGlow 3s linear infinite}
+@keyframes headGlow{to{background-position:200% 0}}
 .sheet-head .grip{width:44px;height:5px;border-radius:99px;background:rgba(255,255,255,.25);margin:0 auto 12px}
-.sheet h3{margin:0;font-family:"Playfair Display",serif;font-size:24px;font-weight:800;color:#ffe600}
+.sheet h3{margin:0;font-family:"Playfair Display",serif;font-size:24px;font-weight:800;color:#ffe600;text-shadow:0 0 18px rgba(255,230,0,.35)}
 .sheet .sub2{margin:6px 0 0;font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:#9fb6e8}
 .svc-list{flex:1 1 auto;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px 20px;background:#071437}
 .svc-list::-webkit-scrollbar{width:4px}
 .svc-list::-webkit-scrollbar-thumb{background:rgba(255,230,0,.5);border-radius:99px}
-.svc{position:relative;display:flex;gap:14px;align-items:center;padding:14px 16px;margin-bottom:12px;border-radius:16px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);font-size:15px;line-height:1.4;animation:svcIn .5s ease-out both}
-.svc:hover,.svc:active{border-color:rgba(255,230,0,.5)}
+.svc{position:relative;overflow:hidden;display:flex;gap:14px;align-items:center;padding:14px 16px;margin-bottom:12px;border-radius:16px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);font-size:15px;line-height:1.4;animation:svcIn .5s ease-out both;transition:transform .25s,border-color .25s,box-shadow .25s,background .25s}
+.svc::before{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.18),transparent);transform:skewX(-20deg);animation:shine 4.5s ease-in-out infinite;pointer-events:none}
+.svc:hover,.svc:active{transform:translateY(-3px) scale(1.01);border-color:rgba(255,230,0,.55);box-shadow:0 10px 26px rgba(255,230,0,.16);background:rgba(255,255,255,.1)}
 @keyframes svcIn{from{opacity:0;transform:translateX(-18px)}to{opacity:1;transform:none}}
 .svc b{flex-shrink:0;width:30px;height:30px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#fff6a8,#ffe600 55%,#d4a80c);color:#111;display:flex;align-items:center;justify-content:center;font-size:13px;box-shadow:0 0 12px rgba(255,230,0,.5);animation:pop 2.4s ease-in-out infinite}
 @keyframes pop{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
-.svc span{color:#f1f5ff}
+.svc span{position:relative;color:#f1f5ff}
 .sheet-foot{flex:0 0 auto;padding:12px 20px 20px;border-top:1px solid rgba(120,160,255,.2);background:#071437}
-.close{width:100%;padding:14px;border:0;border-radius:14px;background:linear-gradient(90deg,#d4a80c,#f5c518);color:#111;font-weight:700;font-size:15px;cursor:pointer;font-family:Montserrat,sans-serif;animation:glow 2.8s ease-in-out infinite;--glow:rgba(245,197,24,.7)}
+.close{width:100%;padding:14px;border:0;border-radius:14px;background:linear-gradient(90deg,#d4a80c,#f5c518);color:#111;font-weight:700;font-size:15px;cursor:pointer;font-family:Montserrat,sans-serif;animation:glow 2.8s ease-in-out infinite;transition:transform .15s;--glow:rgba(245,197,24,.7)}
+.close:active{transform:scale(.97)}
 @media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
 `;
 
