@@ -49,6 +49,19 @@ function page(body, script = "") {
   );
 }
 
+// Logs one scan. Never blocks the page: errors are ignored.
+async function logScan(env, card, request) {
+  try {
+    if (!env.DB) return;
+    const country = request.cf && request.cf.country ? request.cf.country : null;
+    await env.DB.prepare("INSERT INTO scans (card, ts, country) VALUES (?, ?, ?)")
+      .bind(card, Date.now(), country)
+      .run();
+  } catch (e) {
+    // ignore logging failures
+  }
+}
+
 export async function onRequest(context) {
   const { env, request } = context;
   const id = String(context.params.id || "").replace(/\D/g, "").slice(0, 6);
@@ -59,6 +72,10 @@ export async function onRequest(context) {
   if (!activated) {
     return Response.redirect(new URL("/activate?card=" + id, request.url).href, 302);
   }
+
+  // Count this scan (kept out of the critical path)
+  const logging = logScan(env, id, request);
+  context.waitUntil ? context.waitUntil(logging) : await logging;
 
   const info = JSON.parse((await env.TAPREVIEW.get("info:" + id)) || "{}");
   if (!info.name) {
